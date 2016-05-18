@@ -1,24 +1,25 @@
 var application = require("application");
 var imageSource = require("image-source");
 
-var _googleServerApiKey
-var _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
-var _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json'
-var _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo'
-var _errorCallback
+var _googleServerApiKey;
+var _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+var _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+var _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo';
+var _defaultLanguage = 'es';
+var _errorCallback;
 
 function handleErrors(response) {
-  
-  if (!response.ok) {    
+
+  if (!response.ok) {
     console.lod("############################ error")
-    console.log("#####" + JSON.stringify(response));    
+    console.log("#####" + JSON.stringify(response));
     console.lod("############################")
 
     if(_errorCallback)
       _errorCallback(response.statusText)
   }
 
-  return response; 
+  return response;
 }
 
 function capitalize(text) {
@@ -34,10 +35,11 @@ exports.setErrorCallback = function(errorCallback){
   _errorCallback = errorCallback
 }
 
-exports.search = function(text, types){
+exports.search = function(text, types, language){
+    language = language || _defaultLanguage;
 
     var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
-    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language=pt_BR&key=" + _googleServerApiKey
+    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ language +"&key=" + _googleServerApiKey
     console.log("###############################")
     console.log("################### searchBy=" + types + ", value=" + searchBy)
     console.log("################### url=" + url)
@@ -62,14 +64,15 @@ exports.search = function(text, types){
       console.log("############################## data.length=" + data.predictions.length)
       console.log("###=" + JSON.stringify(data))
       console.log("##############################")
-      
+
       return items
     })
 }
 
-exports.details = function(placeid){
+exports.details = function(placeid, language){
+    language = language || _defaultLanguage;
 
-    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language=pt_BR&key=" + _googleServerApiKey
+    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&key=" + _googleServerApiKey
     console.log("###############################")
     console.log("################### placeid=" + placeid)
     console.log("################### url=" + url)
@@ -88,32 +91,32 @@ exports.details = function(placeid){
       var place = {}
       var address_components = data.result.address_components
       for(var key in address_components){
-        
+
         var address_component = address_components[key]
 
-        
-        if (address_component.types[0] == "route"){      
+
+        if (address_component.types[0] == "route"){
             place.rua = address_component.long_name;
         }
-        
+
         if (address_component.types[0] == "locality"){
             place.cidade = address_component.long_name;
         }
 
-        if (address_component.types[0] == "country"){ 
+        if (address_component.types[0] == "country"){
             place.pais = address_component.long_name;
         }
 
-        if (address_component.types[0] == "postal_code_prefix"){ 
+        if (address_component.types[0] == "postal_code_prefix"){
             place.cep = address_component.long_name;
         }
 
-        if (address_component.types[0] == "street_number"){ 
+        if (address_component.types[0] == "street_number"){
             place.numero = address_component.long_name;
         }
 
         if(address_component.types[0] == "sublocality_level_1"){
-          place.bairro = address_component.long_name; 
+          place.bairro = address_component.long_name;
         }
       }
 
@@ -130,7 +133,7 @@ exports.details = function(placeid){
       console.log("############################## parsed place")
       console.log("###=" + JSON.stringify(place))
       console.log("##############################")
-      
+
       return place
 
     })
