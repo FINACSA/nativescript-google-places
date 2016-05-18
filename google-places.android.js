@@ -57,7 +57,7 @@ exports.search = function(text, types, language, radius){
 
       for(var i = 0; i < data.predictions.length; i++){
         items.push({
-          descricao: data.predictions[i].description,
+          description: data.predictions[i].description,
           placeId: data.predictions[i].place_id,
           'data': data.predictions[i]
         })
