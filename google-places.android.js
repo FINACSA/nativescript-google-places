@@ -6,6 +6,7 @@ var _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/jso
 var _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
 var _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo';
 var _defaultLanguage = 'es';
+var _radius = '100000';
 var _errorCallback;
 
 function handleErrors(response) {
@@ -35,11 +36,12 @@ exports.setErrorCallback = function(errorCallback){
   _errorCallback = errorCallback
 }
 
-exports.search = function(text, types, language){
+exports.search = function(text, types, language, radius){
     language = language || _defaultLanguage;
+    radius = radius || _radius;
 
     var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
-    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ language +"&key=" + _googleServerApiKey
+    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
     console.log("###############################")
     console.log("################### searchBy=" + types + ", value=" + searchBy)
     console.log("################### url=" + url)
@@ -69,10 +71,11 @@ exports.search = function(text, types, language){
     })
 }
 
-exports.details = function(placeid, language){
+exports.details = function(placeid, language, radius){
     language = language || _defaultLanguage;
+    radius = radius || _radius;
 
-    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&key=" + _googleServerApiKey
+    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
     console.log("###############################")
     console.log("################### placeid=" + placeid)
     console.log("################### url=" + url)
