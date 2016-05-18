@@ -5,8 +5,10 @@ var _googleServerApiKey;
 var _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 var _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
 var _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo';
+var _queryAutoCompleteApiUrl = 'https://maps.googleapis.com/maps/api/place/queryautocomplete/json';
 var _defaultLanguage = 'es';
 var _radius = '100000';
+var _defaultLocation = '20.651130,-103.426464';
 var _errorCallback;
 
 function handleErrors(response) {
@@ -67,6 +69,29 @@ exports.search = function(text, types, language, radius){
       console.log("###=" + JSON.stringify(data))
       console.log("##############################")
 
+      return items
+    })
+}
+
+exports.queryAutoComplete = function(text, types, language, radius, clocation){
+    language = language || _defaultLanguage;
+    radius = radius || _radius;
+    clocation = clocation || _defaultLocation;
+    var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
+    var url = _queryAutoCompleteApiUrl + "?input=" + searchBy + "&location="+ clocation +"&types=" + types + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
+    return fetch(url)
+    .then(handleErrors)
+    .then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      var items = []
+      for(var i = 0; i < data.predictions.length; i++){
+        items.push({
+          description: data.predictions[i].description,
+          placeId: data.predictions[i].place_id,
+          'data': data.predictions[i]
+        })
+      }
       return items
     })
 }
