@@ -104,27 +104,27 @@ exports.details = function(placeid, language){
 
 
         if (address_component.types[0] == "route"){
-            place.rua = address_component.long_name;
+            place.route = address_component.long_name;
         }
 
         if (address_component.types[0] == "locality"){
-            place.cidade = address_component.long_name;
+            place.locality = address_component.long_name;
         }
 
         if (address_component.types[0] == "country"){
-            place.pais = address_component.long_name;
+            place.country = address_component.long_name;
         }
 
         if (address_component.types[0] == "postal_code_prefix"){
-            place.cep = address_component.long_name;
+            place.zipCode = address_component.long_name;
         }
 
         if (address_component.types[0] == "street_number"){
-            place.numero = address_component.long_name;
+            place.number = address_component.long_name;
         }
 
         if(address_component.types[0] == "sublocality_level_1"){
-          place.bairro = address_component.long_name;
+          place.sublocality = address_component.long_name;
         }
       }
 
