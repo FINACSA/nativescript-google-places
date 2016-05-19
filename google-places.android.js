@@ -14,9 +14,6 @@ var _errorCallback;
 function handleErrors(response) {
 
   if (!response.ok) {
-    console.lod("############################ error")
-    console.log("#####" + JSON.stringify(response));
-    console.lod("############################")
 
     if(_errorCallback)
       _errorCallback(response.statusText)
@@ -44,10 +41,6 @@ exports.search = function(text, types, language, radius){
 
     var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
     var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
-    console.log("###############################")
-    console.log("################### searchBy=" + types + ", value=" + searchBy)
-    console.log("################### url=" + url)
-    console.log("###############################")
 
     return fetch(url)
     .then(handleErrors)
@@ -64,10 +57,6 @@ exports.search = function(text, types, language, radius){
           'data': data.predictions[i]
         })
       }
-
-      console.log("############################## data.length=" + data.predictions.length)
-      console.log("###=" + JSON.stringify(data))
-      console.log("##############################")
 
       return items
     })
@@ -96,25 +85,16 @@ exports.queryAutoComplete = function(text, types, language, radius, clocation){
     })
 }
 
-exports.details = function(placeid, language, radius){
+exports.details = function(placeid, language){
     language = language || _defaultLanguage;
-    radius = radius || _radius;
 
-    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
-    console.log("###############################")
-    console.log("################### placeid=" + placeid)
-    console.log("################### url=" + url)
-    console.log("###############################")
+    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&key=" + _googleServerApiKey
 
     return fetch(url)
     .then(handleErrors)
     .then(function(response) {
       return response.json();
     }).then(function(data) {
-
-      console.log("############################## google place")
-      console.log("###=" + JSON.stringify(data))
-      console.log("##############################")
 
       var place = {}
       var address_components = data.result.address_components
@@ -151,16 +131,12 @@ exports.details = function(placeid, language, radius){
       place.latitude = data.result.geometry.location.lat
       place.longitude = data.result.geometry.location.lng
       place.nome = data.result.name
-      place.telefone = data.result.international_phone_number
-      place.endereco = data.result.formatted_address
+      place.phone = data.result.international_phone_number
+      place.formattedAddress = data.result.formatted_address
 
       if(data.result.photos && data.result.photos.length > 0){
         place.photoReference = data.result.photos[0].photo_reference
       }
-
-      console.log("############################## parsed place")
-      console.log("###=" + JSON.stringify(place))
-      console.log("##############################")
 
       return place
 
@@ -169,8 +145,5 @@ exports.details = function(placeid, language, radius){
 
 exports.loadPlacePhoto = function(photoreference, onSuccessCallback, onFailCallback){
   var url = _placesImagesApiUrl + "?maxwidth=100&photoreference=" + photoreference + "&key=" + _googleServerApiKey;
-  console.log("#################################")
-  console.log("##### url=" + url)
-  console.log("#################################")
   return imageSource.fromUrl(url)
 }
