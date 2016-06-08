@@ -1,7 +1,8 @@
 # nativescript-gplaces
 
 Read Google Places API Documentation at https://developers.google.com/places/android-api/?hl=pt-br
-All Credits for https://github.com/mobilemindtec/nativescript-google-places
+
+**All Credits for**  https://github.com/mobilemindtec/nativescript-google-places
 
 ## Api Configuration
 
@@ -11,19 +12,27 @@ Create a new key to Google Places Api Web Service
 
 ```
   var GPlaces = require("nativescript-gplaces");
-  var googleServerApiKey = "your key api";
-  GPlaces.setGoogleServerApiKey(googleServerApiKey);
-  GPlaces.setErrorCallback(onPlacesErrorCallback);
+  GPlaces.init({
+                googleServerApiKey: 'your_api_Key',
+                language: 'es',
+                radius: '100000',
+                location: '20.651130,-103.426464',
+                errorCallback: function(text){console.log(text)}
+               );
+```
 
-  function onPlacesErrorCallback(text){
-      alert(text)
-  }
+## Place autocomplete
+```
+  // run autocomplete
+  GPlaces.queryAutoComplete(textSearch.text, types).then(function(result){
+      // predictions list
+  })
 ```
 
 ## Place search
 ```
   // run search
-  GPlaces.queryAutoComplete(textSearch.text, types, language, radius).then(function(result){
+  GPlaces.search(textSearch.text, types).then(function(result){
       // search list
   })
 ```
@@ -35,4 +44,3 @@ Create a new key to Google Places Api Web Service
       // place result
   })
 ```
-
