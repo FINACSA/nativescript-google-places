@@ -1,15 +1,15 @@
 var application = require("application");
 var imageSource = require("image-source");
 
-var _googleServerApiKey;
-var _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-var _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
-var _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo';
-var _queryAutoCompleteApiUrl = 'https://maps.googleapis.com/maps/api/place/queryautocomplete/json';
-var _defaultLanguage = 'es';
-var _radius = '100000';
-var _defaultLocation = '20.651130,-103.426464';
-var _errorCallback;
+var _googleServerApiKey,
+    _defaultLanguage,
+    _radius,
+    _errorCallbackl,
+    _defaultLocation,
+    _placesApiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json',
+    _placesDetailsApiUrl = 'https://maps.googleapis.com/maps/api/place/details/json',
+    _placesImagesApiUrl = 'https://maps.googleapis.com/maps/api/place/photo',
+    _queryAutoCompleteApiUrl = 'https://maps.googleapis.com/maps/api/place/queryautocomplete/json';
 
 function handleErrors(response) {
 
@@ -26,21 +26,17 @@ function capitalize(text) {
   return text.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
 
-
-exports.setGoogleServerApiKey = function(googleServerApiKey){
-  _googleServerApiKey = googleServerApiKey
+exports.init = function(params){
+  _googleServerApiKey = params.googleServerApiKey;
+  _language = params.language || 'es';
+  _radius = params.radius || '100000';
+  _location = params.location || '20.651130,-103.426464';
+  _errorCallback = params.errorCallback;
 }
 
-exports.setErrorCallback = function(errorCallback){
-  _errorCallback = errorCallback
-}
-
-exports.search = function(text, types, language, radius){
-    language = language || _defaultLanguage;
-    radius = radius || _radius;
-
+exports.search = function(text, types){
     var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
-    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
+    var url = _placesApiUrl + "?input=" + searchBy + "&types=" + types + "&language="+ _language +"&radius="+ _radius +"&key=" + _googleServerApiKey
 
     return fetch(url)
     .then(handleErrors)
@@ -62,12 +58,9 @@ exports.search = function(text, types, language, radius){
     })
 }
 
-exports.queryAutoComplete = function(text, types, language, radius, clocation){
-    language = language || _defaultLanguage;
-    radius = radius || _radius;
-    clocation = clocation || _defaultLocation;
+exports.queryAutoComplete = function(text, types){
     var searchBy = capitalize(text).replace(new RegExp(" ", 'g'), "");
-    var url = _queryAutoCompleteApiUrl + "?input=" + searchBy + "&location="+ clocation +"&types=" + types + "&language="+ language +"&radius="+ radius +"&key=" + _googleServerApiKey
+    var url = _queryAutoCompleteApiUrl + "?input=" + searchBy + "&location="+ _location +"&types=" + types + "&language="+ _language +"&radius="+ _radius +"&key=" + _googleServerApiKey
     return fetch(url)
     .then(handleErrors)
     .then(function(response) {
@@ -85,10 +78,8 @@ exports.queryAutoComplete = function(text, types, language, radius, clocation){
     })
 }
 
-exports.details = function(placeid, language){
-    language = language || _defaultLanguage;
-
-    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ language +"&key=" + _googleServerApiKey
+exports.details = function(placeid){
+    var url = _placesDetailsApiUrl + "?placeid=" + placeid + "&language="+ _language +"&key=" + _googleServerApiKey
 
     return fetch(url)
     .then(handleErrors)
